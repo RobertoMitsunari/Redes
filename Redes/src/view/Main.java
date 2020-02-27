@@ -10,7 +10,7 @@ public class Main {
 		//rede.ping("aa");
 		String[] os = rede.os();
 		System.out.println(os[0]);
-
+		System.out.println("Arroz");
 	}
 
 }
