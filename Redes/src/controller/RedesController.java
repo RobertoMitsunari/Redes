@@ -21,26 +21,58 @@ public class RedesController {
 
 	public void Ip(String os) {
 		Process process;
+		String comando = "";
+		if (os.equals("Windows 10")) {
+			comando = "ipconfig";
+		} else {
+			if (os.equals("Linux")) {
+				comando = "ifconfig";
+			}
+		}
 		try {
-			process = Runtime.getRuntime().exec("ipconfig");
+
+			process = Runtime.getRuntime().exec(comando);
 			InputStream input = process.getInputStream();
 			InputStreamReader reader = new InputStreamReader(input);
 			BufferedReader bufferReader = new BufferedReader(reader);
-			String line = bufferReader.readLine();
+			String line = "";
 			StringBuffer saida = new StringBuffer();
-			while (line != null) {
-				line = bufferReader.readLine();
-				if (line != null) {
-					if (line.contains("Adaptador")) {
-						if (saida.length() > 0) {
-							if (!(saida.substring(saida.lastIndexOf("Adaptador"), saida.length()).contains("IPv4"))) {
-								saida.delete(saida.lastIndexOf("Adaptador"), saida.length());
+			if (os == "Windows 10") {
+				while (line != null) {
+					line = bufferReader.readLine();
+					if (line != null) {
+						if (line.contains("Adaptador")) {
+							if (saida.length() > 0) {
+								if (!(saida.substring(saida.lastIndexOf("Adaptador"), saida.length())
+										.contains("IPv4"))) {
+									saida.delete(saida.lastIndexOf("Adaptador"), saida.length());
+								}
+							}
+							saida.append(line + " \n");
+						} else {
+							if (line.contains("IPv4")) {
+								saida.append(line + " \n");
 							}
 						}
-						saida.append(line + " \n");
-					} else {
-						if (line.contains("IPv4")) {
-							saida.append(line + " \n");
+					}
+				}
+			}else {
+				if (os.contentEquals("Linux")) {
+					int temp = 0; 
+					while (line != null) {
+						line = bufferReader.readLine();
+						if (line != null) {
+							if (line.contains("flags")) {
+								if (saida.length() > 0) {
+									saida.delete(temp, saida.length());
+								}
+								saida.append(line + "\n");
+							}else {
+								if (line.contains("netmask")) {
+									saida.append(line + "\n");
+									temp = saida.length();
+								}
+							}
 						}
 					}
 				}
@@ -66,11 +98,12 @@ public class RedesController {
 			BufferedReader bufferReader = new BufferedReader(reader);
 			String line = bufferReader.readLine();
 			int pingMedia = 0;
-			while(line != null) {
+			while (line != null) {
 				line = bufferReader.readLine();
-				if (line != null ) {
-					if(line.contains("tempo=")) {
-						pingMedia += Integer.parseInt(line.substring(line.lastIndexOf("=") + 1,line.lastIndexOf("ms")));
+				if (line != null) {
+					if (line.contains("tempo=")) {
+						pingMedia += Integer
+								.parseInt(line.substring(line.lastIndexOf("=") + 1, line.lastIndexOf("ms")));
 					}
 				}
 			}
@@ -80,11 +113,11 @@ public class RedesController {
 			bufferReader.close();
 			reader.close();
 			input.close();
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	
+
 	}
 
 }
