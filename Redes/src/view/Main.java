@@ -8,7 +8,10 @@ public class Main {
 		RedesController rede = new RedesController();
 		
 		String[] os = rede.os();
-		rede.Ip(os[0]);
+		//rede.Ip(os[0]);
+		
+		rede.ping(os[0]);
+		
 		
 
 	}

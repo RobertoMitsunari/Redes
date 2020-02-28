@@ -91,19 +91,27 @@ public class RedesController {
 
 	public void ping(String os) {
 		Process process;
+		String comando = "";
 		try {
-			process = Runtime.getRuntime().exec("ping google.com  -n 10");
+			if (os.equals("Windows 10")) {
+				comando = "ping google.com  -n 10";
+			} else {
+				if (os.equals("Linux")) {
+					comando = "ping -c 10 google.com";
+				}
+			}
+			process = Runtime.getRuntime().exec(comando);
 			InputStream input = process.getInputStream();
 			InputStreamReader reader = new InputStreamReader(input);
 			BufferedReader bufferReader = new BufferedReader(reader);
 			String line = bufferReader.readLine();
-			int pingMedia = 0;
+			double pingMedia = 0;
 			while (line != null) {
 				line = bufferReader.readLine();
 				if (line != null) {
-					if (line.contains("tempo=")) {
-						pingMedia += Integer
-								.parseInt(line.substring(line.lastIndexOf("=") + 1, line.lastIndexOf("ms")));
+					if (line.contains("tempo=") || line.contains("time=")) {
+						pingMedia += Double
+								.parseDouble(line.substring(line.lastIndexOf("=") + 1, line.lastIndexOf("ms")));
 					}
 				}
 			}
